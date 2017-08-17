@@ -31,11 +31,12 @@ include $this->admin_tpl('header','admin');
 <div>
 <h2>输入关键词可以爬取相应的新闻信息</h2>
 <br>
-<form action="phpcms/modules/reptile/functions/proceedSubmit.php" onsubmit="return checkSubmit()" method="post">
+<form action="phpcms/modules/reptile/functions/proceed.php" onsubmit="return checkSubmit()" method="post">
 	新闻搜索:&nbsp;&nbsp;<input type="text" name="keyword1" class="input" style="height: 30px;width:300px;font-size: 16px">
 
 	<input type="submit" name="submit" value="搜索一下" style="height: 37px;width: 70px;font-size: 16px">
 </form>
+<p style="margin-top: 30px;"><a href="phpcms/modules/reptile/functions/proceedSubmit.php">点此查看临时表中的数据</a></p>
 </div>
 </body>
 </html>
