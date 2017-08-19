@@ -13,7 +13,7 @@
 			width: 70px;
 		}
 	</style>
-	<script type="text/javascript" src="jquery-3.2.1.min.js">
+	<script type="text/javascript" src="js/jquery-3.2.1.min.js">
 	</script>
 	<script type="text/javascript">
 		function insertData() {
@@ -32,9 +32,9 @@
 <button class="btn" onclick="clearData()">否</button>
 </div>
 <?php 
-	include 'SqlHelper.php';
+	include '../classes/SqlHelper.php';
 	$sqlhelper = new SqlHelper();
-	echo "<table border='1'>";
+	echo "<table border='1' bordercolor='gray'>";
 	$sqlhelper->queryAll();
 	echo "</table>";
  ?>
