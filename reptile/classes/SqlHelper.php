@@ -51,4 +51,60 @@
 			}
 			$mysqli->close();
 		}
+
+		/*
+		将从临时表里获取的数据插入到正式的表中
+		*/
+		public function insertData()
+		{
+			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			if ($mysqli->connect_error) {
+				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
+			}
+			//设置utf-8编码
+			$mysqli->query('SET NAMES utf8');
+
+			$result = $mysqli->query("insert into v9_python_test (SELECT * from v9_python)");
+			if ($result) {
+				$result = $mysqli->query("insert into v9_python_data_test (SELECT * from v9_python_data)");
+				if (!$result) {
+					echo "表v9_python_test插入数据失败!";
+				}
+			}else
+			{
+				echo "表v9_python_data_test插入数据失败！";
+			}
+			//$result->close();
+			$mysqli->close();
+
+			
+		}
+
+		/**
+		清空临时表数据
+		*/	
+		public function deleteAll()
+		{
+			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			if ($mysqli->connect_error) {
+				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
+			}
+			//设置utf-8编码
+			$mysqli->query('SET NAMES utf8');
+
+			$result = $mysqli->query("delete from v9_python_test");
+			if ($result) {
+				$result = $mysqli->query("delete from v9_python_data_test");
+				if (!$result) {
+					echo "清空临时表v9_python_data数据失败";
+				}
+			}else
+			{
+				echo "清空临时表v9_python数据失败";
+			}
+
+			//$result->close();
+			$mysqli->close();
+		}
+		
 	}

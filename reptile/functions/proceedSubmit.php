@@ -17,11 +17,13 @@
 	</script>
 	<script type="text/javascript">
 		function insertData() {
-			window.alert("插入数据库");
+			window.location.href = "proceed.php?m=insert";
 		}
 		function clearData() {
 			var i = window.confirm("确定要清理数据吗？");
-			alert(i);
+			if (i==true) {
+				window.location.href = "proceed.php?m=clear";
+			}
 		}
 	</script>
 </head>
