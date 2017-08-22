@@ -6,6 +6,25 @@
 
 	class SqlHelper
 	{
+		//查看临时表中数据是否为空
+		public function dataIsNull()
+		{
+			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			if ($mysqli->connect_error) {
+				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
+			}
+			//设置utf-8编码
+			$mysqli->query('SET NAMES utf8');
+
+			$result = $mysqli->query("select * from v9_python");
+			if ($result) {
+				return true;	
+			}else
+			{
+				return false;
+			}
+	}
+
 		//查询临时表中的数据
 		public function queryAll()
 		{
@@ -105,6 +124,29 @@
 
 			//$result->close();
 			$mysqli->close();
+		}
+
+		/*
+		查询栏目id
+		*/
+		public function queryCat()
+		{
+			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			if ($mysqli->connect_error) {
+				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
+			}
+			//设置utf-8编码
+			$mysqli->query('SET NAMES utf8');
+
+			$result = $mysqli->query("select catid,catname from v9_category WHERE catid > 5");
+			if ($result) {
+				while($row=$result->fetch_array()){
+					echo "<option>".$row[0]."_".$row[1]."</option>";
+				}
+			}
+
+			$result->close();
+			$mysqli->close();	
 		}
 		
 	}

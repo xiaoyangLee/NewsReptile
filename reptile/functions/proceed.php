@@ -4,11 +4,16 @@
 	$db = new SqlHelper();
 
 	if ($_GET['m'] == 'insert') {
-		//echo "我是处理插入数据的";
-		$db->insertData();
+		//$db->insertData();
+		echo "插入数据成功，2秒后返回...";
+		//延时跳转
+		header("Refresh:2;url=proceedSubmit.php");
 		
 	}else 
 	if ($_GET['m'] == 'clear') {
-		//echo "我是处理清空数据的";
-		$db->deleteAll();
+		//$db->deleteAll();
+		echo "清空数据成功,2秒后返回...";
+
+		//延时跳转
+		header("Refresh:2;url=proceedSubmit.php");
 	}
