@@ -74,7 +74,7 @@
 		/*
 		将从临时表里获取的数据插入到正式的表中
 		*/
-		public function insertData()
+		public function insertData($catid)
 		{
 			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
 			if ($mysqli->connect_error) {
@@ -83,9 +83,55 @@
 			//设置utf-8编码
 			$mysqli->query('SET NAMES utf8');
 
-			$result = $mysqli->query("insert into v9_python_test (SELECT * from v9_python)");
+			$result = $mysqli->query("insert into v9_python_test (catid,
+typeid,
+title,
+style,
+thumb,
+keywords,
+description,
+posids,
+url,
+listorder,
+`status`,
+sysadd,
+islink,
+username,
+inputtime,
+updatetime)
+select
+v9_python.catid,
+v9_python.typeid,
+v9_python.title,
+v9_python.style,
+v9_python.thumb,
+v9_python.keywords,
+v9_python.description,
+v9_python.posids,
+v9_python.url,
+v9_python.listorder,
+v9_python.`status`,
+v9_python.sysadd,
+v9_python.islink,
+v9_python.username,
+v9_python.inputtime,
+v9_python.updatetime
+from v9_python
+");
 			if ($result) {
-				$result = $mysqli->query("insert into v9_python_data_test (SELECT * from v9_python_data)");
+				$result = $mysqli->query("insert into v9_python_data_test (content,
+paginationtype,
+maxcharperpage,
+template,
+paytype)
+SELECT
+v9_python_data.content,
+v9_python_data.paginationtype,
+v9_python_data.maxcharperpage,
+v9_python_data.template,
+v9_python_data.paytype
+from v9_python_data
+");
 				if (!$result) {
 					echo "表v9_python_test插入数据失败!";
 				}
@@ -138,15 +184,44 @@
 			//设置utf-8编码
 			$mysqli->query('SET NAMES utf8');
 
-			$result = $mysqli->query("select catid,catname from v9_category WHERE catid > 5");
+			$result = $mysqli->query("select catid,catname from v9_category where modelid=1");
 			if ($result) {
 				while($row=$result->fetch_array()){
-					echo "<option>".$row[0]."_".$row[1]."</option>";
+					echo "<option value=".$row[0].">".$row[1]."</option>";
 				}
 			}
 
 			$result->close();
 			$mysqli->close();	
 		}
+
+		/*
+		修改栏目id
+		*/
+		public function modify($catid)
+		{
+			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			if ($mysqli->connect_error) {
+				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
+			}
+			//设置utf-8编码
+			$mysqli->query('SET NAMES utf8');
+
+			$result = $mysqli->query("select id,catid,url from v9_python_test");
+
+			if ($result) {
+				//一次性改变所有数据的栏目id
+				$mysqli->query("update v9_python_test set catid = ".$catid);
+
+				while ($row = $result->fetch_array()) {
+					$mysqli->query("update v9_python_test set url = 'http://127.0.0.1/phpcms/index.php?m=content&c=index&a=show&catid=".$catid."&id=".$row[0]."' where id= ".$row[0]."");
+
+				}
+			}
+			$result->close();
+			$mysqli->close();
+		}
+
 		
+
 	}
