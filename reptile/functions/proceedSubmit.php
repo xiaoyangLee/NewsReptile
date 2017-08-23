@@ -8,7 +8,9 @@
 		if (($db->dataIsNull())==false) {
 			echo "<h3>临时表中没有数据。</h3>";
 			echo "<script>
-				
+				$(document).ready(function(){
+					$('.top').hide();
+				}
 			</script>";
 		}
 	 ?>
@@ -44,6 +46,20 @@
   				$(".top").hide();
     			$(".cat").fadeIn();
   			});
+
+  			$("#cfmCat").click(function() {
+  				//window.location.href = "proceed.php?m=insert";
+  				var sel = document.getElementById("select")
+  				//获取被选择的栏目id
+  				var val = sel.options[sel.selectedIndex].value;
+  				window.location.href = "proceed.php?m=insert&catid="+val;
+  			});
+
+  			$("#cancel").click(function() {
+  				alert("我是取消存入数据库的操作！");
+  				$(".cat").hide();
+    			$(".top").fadeIn();
+  			});
 		});
 
 		//清空数据函数
@@ -57,13 +73,14 @@
 </head>
 <body>
  <div class="cat">
- 请选择要存入到的栏目：<select>
+ 请选择要存入到的栏目：<select id="select">
 <?php 
 
 	$db->queryCat();
  ?>
 </select>
-<button class="btn">确定</button>
+<button class="btn" id="cfmCat">确定</button>
+<button class="btn" id="cancel">取消</button>
  </div>
 <div class="top">
 <p>请选择是否将已经爬取到的数据存入到数据库之中？若点击"否"将清空这次爬取的所有数据。<p>
