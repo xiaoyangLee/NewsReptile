@@ -16,12 +16,10 @@
 			//设置utf-8编码
 			$mysqli->query('SET NAMES utf8');
 
-			$result = $mysqli->query("select * from v9_python");
-			if ($result) {
-				return true;	
-			}else
-			{
-				return false;
+			$res = $mysqli->query("SELECT count(*) from v9_news_temp");
+			$count = $res->fetch_row();
+			if ($count[0]==0) {
+				return false;	
 			}
 	}
 
@@ -36,7 +34,7 @@
 			$mysqli->query('SET NAMES utf8');
 
 			//查询数据中所有的条目数，存在变量$total中
-			$res = $mysqli->query("SELECT count(*) from v9_python");
+			$res = $mysqli->query("SELECT count(*) from v9_news_temp");
 			//将资源类型的数据转为数组
 			$count = $res->fetch_row();
 			//取出数组唯一一个元素,即数据条目总数
@@ -46,7 +44,7 @@
 			$page = new Page($total,10,"",true);
 
 			//查看数据库并显示
-			if ($result = $mysqli->query("SELECT id,title,inputtime,url from v9_python  ".$page->limit))
+			if ($result = $mysqli->query("SELECT id,title,inputtime,url from v9_news_temp  ".$page->limit))
 			{
 
 				while($row=$result->fetch_array()){	
@@ -82,8 +80,9 @@
 			}
 			//设置utf-8编码
 			$mysqli->query('SET NAMES utf8');
+			$mysqli->query("update v9_news_temp set catid = ".$catid);
 
-			$result = $mysqli->query("insert into v9_python_test (catid,
+			$result = $mysqli->query("insert into v9_news (catid,
 typeid,
 title,
 style,
@@ -99,45 +98,57 @@ islink,
 username,
 inputtime,
 updatetime)
-select
-v9_python.catid,
-v9_python.typeid,
-v9_python.title,
-v9_python.style,
-v9_python.thumb,
-v9_python.keywords,
-v9_python.description,
-v9_python.posids,
-v9_python.url,
-v9_python.listorder,
-v9_python.`status`,
-v9_python.sysadd,
-v9_python.islink,
-v9_python.username,
-v9_python.inputtime,
-v9_python.updatetime
-from v9_python
+SELECT
+v9_news_temp.catid,
+v9_news_temp.typeid,
+v9_news_temp.title,
+v9_news_temp.style,
+v9_news_temp.thumb,
+v9_news_temp.keywords,
+v9_news_temp.description,
+v9_news_temp.posids,
+v9_news_temp.url,
+v9_news_temp.listorder,
+v9_news_temp.`status`,
+v9_news_temp.sysadd,
+v9_news_temp.islink,
+v9_news_temp.username,
+v9_news_temp.inputtime,
+v9_news_temp.updatetime
+from v9_news_temp
 ");
 			if ($result) {
-				$result = $mysqli->query("insert into v9_python_data_test (content,
+				$result = $mysqli->query("insert into v9_news_data(content,
+readpoint,
+groupids_view,
 paginationtype,
 maxcharperpage,
 template,
-paytype)
+paytype,
+relation,
+voteid,
+allow_comment,
+copyfrom)
 SELECT
-v9_python_data.content,
-v9_python_data.paginationtype,
-v9_python_data.maxcharperpage,
-v9_python_data.template,
-v9_python_data.paytype
-from v9_python_data
+v9_news_data_temp.content,
+v9_news_data_temp.readpoint,
+v9_news_data_temp.groupids_view,
+v9_news_data_temp.paginationtype,
+v9_news_data_temp.maxcharperpage,
+v9_news_data_temp.template,
+v9_news_data_temp.paytype,
+v9_news_data_temp.relation,
+v9_news_data_temp.voteid,
+v9_news_data_temp.allow_comment,
+v9_news_data_temp.copyfrom
+from v9_news_data_temp
 ");
 				if (!$result) {
-					echo "表v9_python_test插入数据失败!";
+					echo "表v9_news插入数据失败!";
 				}
 			}else
 			{
-				echo "表v9_python_data_test插入数据失败！";
+				echo "表v9_news_data插入数据失败！";
 			}
 			//$result->close();
 			$mysqli->close();
@@ -157,15 +168,15 @@ from v9_python_data
 			//设置utf-8编码
 			$mysqli->query('SET NAMES utf8');
 
-			$result = $mysqli->query("delete from v9_python_test");
+			$result = $mysqli->query("delete from v9_news_temp");
 			if ($result) {
-				$result = $mysqli->query("delete from v9_python_data_test");
+				$result = $mysqli->query("delete from v9_news_data_temp");
 				if (!$result) {
-					echo "清空临时表v9_python_data数据失败";
+					echo "清空临时表v9_news_data_temp数据失败";
 				}
 			}else
 			{
-				echo "清空临时表v9_python数据失败";
+				echo "清空临时表v9_news_temp数据失败";
 			}
 
 			//$result->close();
@@ -207,14 +218,14 @@ from v9_python_data
 			//设置utf-8编码
 			$mysqli->query('SET NAMES utf8');
 
-			$result = $mysqli->query("select id,catid,url from v9_python_test");
+			$result = $mysqli->query("select id,catid,url from v9_news_temp");
 
 			if ($result) {
 				//一次性改变所有数据的栏目id
-				$mysqli->query("update v9_python_test set catid = ".$catid);
+				// $mysqli->query("update v9_python_test set catid = ".$catid);
 
 				while ($row = $result->fetch_array()) {
-					$mysqli->query("update v9_python_test set url = 'http://127.0.0.1/phpcms/index.php?m=content&c=index&a=show&catid=".$catid."&id=".$row[0]."' where id= ".$row[0]."");
+					$mysqli->query("update v9_news set url = 'http://127.0.0.1/phpcms/index.php?m=content&c=index&a=show&catid=".$row[1]."&id=".$row[0]."' where id= ".$row[0]."");
 
 				}
 			}

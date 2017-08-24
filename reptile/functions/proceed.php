@@ -4,12 +4,14 @@
 	$db = new SqlHelper();
 
 	if ($_GET['m'] == 'insert') {
-		//插入数据
-		$db->insertData();
+	
 		//获取用户选择的栏目
 		$catid = $_GET['catid'];
-		//修改栏目id
-		//$db->modify($catid);
+		//插入数据
+		$db->insertData($_GET['catid']);
+		//修改url
+		$db->modify($catid);
+		//$db->deleteAll();
 		echo "插入数据成功，2秒后返回...";
 
 		//延时跳转 
