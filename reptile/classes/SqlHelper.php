@@ -5,18 +5,23 @@
 	include 'Page.php';
 
 	class SqlHelper
-	{
+	{	
+		private $database = 'phpcmsv9';
+		private $host = '127.0.0.1';
+		private $user = 'root';
+		private $passwd = '';
+
 		//查看临时表中数据是否为空
 		public function dataIsNull()
 		{
-			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			$mysqli = new mysqli($this->host, $this->user,$this->passwd, $this->database);
 			if ($mysqli->connect_error) {
 				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
 			}
 			//设置utf-8编码
 			$mysqli->query('SET NAMES utf8');
 
-			$res = $mysqli->query("SELECT count(*) from v9_news_temp");
+			$res = $mysqli->query("select count(*) from v9_news_temp");
 			$count = $res->fetch_row();
 			if ($count[0]==0) {
 				return false;	
@@ -26,7 +31,7 @@
 		//查询临时表中的数据
 		public function queryAll()
 		{
-			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			$mysqli = new mysqli($this->host, $this->user,$this->passwd, $this->database);
 			if ($mysqli->connect_error) {
 				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
 			}
@@ -34,7 +39,7 @@
 			$mysqli->query('SET NAMES utf8');
 
 			//查询数据中所有的条目数，存在变量$total中
-			$res = $mysqli->query("SELECT count(*) from v9_news_temp");
+			$res = $mysqli->query("select count(*) from v9_news_temp");
 			//将资源类型的数据转为数组
 			$count = $res->fetch_row();
 			//取出数组唯一一个元素,即数据条目总数
@@ -44,7 +49,7 @@
 			$page = new Page($total,10,"",true);
 
 			//查看数据库并显示
-			if ($result = $mysqli->query("SELECT id,title,inputtime,url from v9_news_temp  ".$page->limit))
+			if ($result = $mysqli->query("select id,title,inputtime,url from v9_news_temp  ".$page->limit))
 			{
 
 				while($row=$result->fetch_array()){	
@@ -58,7 +63,8 @@
   					echo "</td>";
 
   					echo "<td>";
-   					echo date('r',$row[2]);
+   					//echo date('r',$row[2]);
+   					echo date("Y-m-d H:i:s",$row[2]);
   					echo "</td>";
   					echo "</tr>";
   				}
@@ -74,7 +80,7 @@
 		*/
 		public function insertData($catid)
 		{
-			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			$mysqli = new mysqli($this->host, $this->user,$this->passwd, $this->database);
 			if ($mysqli->connect_error) {
 				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
 			}
@@ -82,7 +88,8 @@
 			$mysqli->query('SET NAMES utf8');
 			$mysqli->query("update v9_news_temp set catid = ".$catid);
 
-			$result = $mysqli->query("insert into v9_news (catid,
+			$result = $mysqli->query("insert into v9_news (
+catid,
 typeid,
 title,
 style,
@@ -97,7 +104,8 @@ sysadd,
 islink,
 username,
 inputtime,
-updatetime)
+updatetime
+)
 SELECT
 v9_news_temp.catid,
 v9_news_temp.typeid,
@@ -115,10 +123,9 @@ v9_news_temp.islink,
 v9_news_temp.username,
 v9_news_temp.inputtime,
 v9_news_temp.updatetime
-from v9_news_temp
-");
+from v9_news_temp");
 			if ($result) {
-				$result = $mysqli->query("insert into v9_news_data(content,
+				$result = $mysqli->query("insert into v9_news_data (content,
 readpoint,
 groupids_view,
 paginationtype,
@@ -141,8 +148,7 @@ v9_news_data_temp.relation,
 v9_news_data_temp.voteid,
 v9_news_data_temp.allow_comment,
 v9_news_data_temp.copyfrom
-from v9_news_data_temp
-");
+from v9_news_data_temp");
 				if (!$result) {
 					echo "表v9_news插入数据失败!";
 				}
@@ -161,7 +167,7 @@ from v9_news_data_temp
 		*/	
 		public function deleteAll()
 		{
-			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			$mysqli = new mysqli($this->host, $this->user,$this->passwd, $this->database);
 			if ($mysqli->connect_error) {
 				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
 			}
@@ -188,7 +194,7 @@ from v9_news_data_temp
 		*/
 		public function queryCat()
 		{
-			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			$mysqli = new mysqli($this->host, $this->user,$this->passwd, $this->database);
 			if ($mysqli->connect_error) {
 				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
 			}
@@ -211,14 +217,14 @@ from v9_news_data_temp
 		*/
 		public function modify($catid)
 		{
-			$mysqli = new mysqli('127.0.0.1', 'root', '','phpcmsv9');
+			$mysqli = new mysqli($this->host, $this->user,$this->passwd, $this->database);
 			if ($mysqli->connect_error) {
 				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
 			}
 			//设置utf-8编码
 			$mysqli->query('SET NAMES utf8');
 
-			$result = $mysqli->query("select id,catid,url from v9_news_temp");
+			$result = $mysqli->query("select id,catid,url from v9_news");
 
 			if ($result) {
 				//一次性改变所有数据的栏目id
@@ -233,6 +239,23 @@ from v9_news_data_temp
 			$mysqli->close();
 		}
 
-		
+		/*
+		修改v9_news_data的groupids_view和template
+		*/
+		public function modifyGroup()
+		{
+			$mysqli = new mysqli($this->host, $this->user,$this->passwd, $this->database);
+			if ($mysqli->connect_error) {
+				die('Connect Error (' . $mysqli->connect_error() . ') '. $mysqli->connect_error());
+			}
+			//设置utf-8编码
+			$mysqli->query('SET NAMES utf8');
+			$result = $mysqli->query("update v9_news_data_temp set groupids_view = '8,2,6,4,5' ,template = ''");
+			if (!$result) {
+				echo "修改阅读权限和模板失败！";
+			}
+			$mysqli->close();
+
+		}
 
 	}
