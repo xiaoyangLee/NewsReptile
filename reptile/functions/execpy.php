@@ -15,5 +15,8 @@
 	$keyword = str_replace(' ', '%', $keyword);
 	//echo $keyword;
 	system("python index.py ".$keyword." ".$pagenum." ".$datanum);
+	echo "<br>";
+
+	echo "<a href = 'proceedSubmit.php'>点此查看临时表数据</a>";
 
 	

@@ -5,15 +5,15 @@
 	<?php 
 		include '../classes/SqlHelper.php';
 		$db = new SqlHelper();
-		if (($db->dataIsNull())==false) {
-			echo "<h3>临时表中没有数据。</h3>";
-			echo "<script>";
-			echo "$(document).ready(function(){";
-			echo "$('.top').hide();";
-			echo "});";
-			echo "</script>";
-		}
-
+		// $isnull = $db->dataIsNull();
+		// if (!$isnull) {
+		// 	echo "<h3>临时表中没有数据。</h3>";
+		// 	echo "<script>";
+		// 	echo "$(document).ready(function(){";
+		// 	echo "$('.top').hide();";
+		// 	echo "});";
+		// 	echo "</script>";
+		// }
 	 ?>
 	<meta charset="utf-8">
 	<title>Proceed Submit</title>
